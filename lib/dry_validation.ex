@@ -19,18 +19,20 @@ defmodule DryValidation do
 
   def render(buff), do: Agent.get(buff, & &1) |> Enum.reverse() |> DryValidation.construct([])
 
-  defmacro map(name, do: inner) do
+  defmacro map(name, opts \\ [], do: inner) do
     quote do
+      optional = unquote(Keyword.get(opts, :optional, false))
+
       put_buffer(
         var!(buffer, __MODULE__),
-        %{rule: :map, block: :start, name: unquote(name)}
+        %{rule: :map, block: :start, name: unquote(name), optional: optional}
       )
 
       unquote(inner)
 
       put_buffer(
         var!(buffer, __MODULE__),
-        %{rule: :map, block: :end, name: unquote(name)}
+        %{rule: :map, block: :end, name: unquote(name), optional: optional}
       )
     end
   end
@@ -52,8 +54,8 @@ defmodule DryValidation do
     end
   end
 
-  def construct([%{name: name, block: :start, rule: rule} | tail], result) do
-    result ++ [%{name: name, inner: construct(tail, []), rule: rule}]
+  def construct([%{name: name, block: :start, rule: rule, optional: optional} | tail], result) do
+    result ++ [%{name: name, inner: construct(tail, []), rule: rule, optional: optional}]
   end
 
   def construct([%{block: :end} | _tail], result) do

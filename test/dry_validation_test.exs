@@ -11,7 +11,7 @@ defmodule DryValidationTest do
         map :father do
           required(:name)
 
-          map :parent do
+          map :parent, optional: true do
             required(:gender)
             required(:birth_date)
           end
@@ -35,11 +35,13 @@ defmodule DryValidationTest do
                        }
                      ],
                      name: :parent,
-                     rule: :map
+                     rule: :map,
+                     optional: true
                    }
                  ],
                  name: :father,
-                 rule: :map
+                 rule: :map,
+                 optional: false
                }
              ]
   end
