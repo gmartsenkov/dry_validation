@@ -7,7 +7,8 @@ defmodule DryValidation.MixProject do
       version: "0.1.0",
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      aliases: aliases()
     ]
   end
 
@@ -21,7 +22,16 @@ defmodule DryValidation.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
+      {:ex_spec, "~> 2.0", only: :test},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
+    ]
+  end
+
+  defp aliases do
+    [
+      test: ["test", "credo"]
     ]
   end
 end
