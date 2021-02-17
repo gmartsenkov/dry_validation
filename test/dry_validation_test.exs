@@ -34,10 +34,12 @@ defmodule DryValidationTest do
                          rule: :required
                        }
                      ],
-                     name: :parent
+                     name: :parent,
+                     rule: :map
                    }
                  ],
-                 name: :father
+                 name: :father,
+                 rule: :map
                }
              ]
   end

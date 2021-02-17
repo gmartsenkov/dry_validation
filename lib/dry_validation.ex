@@ -23,14 +23,14 @@ defmodule DryValidation do
     quote do
       put_buffer(
         var!(buffer, __MODULE__),
-        %{rule: :start_block, name: unquote(name)}
+        %{rule: :map, block: :start, name: unquote(name)}
       )
 
       unquote(inner)
 
       put_buffer(
         var!(buffer, __MODULE__),
-        %{rule: :end_block, name: unquote(name)}
+        %{rule: :map, block: :end, name: unquote(name)}
       )
     end
   end
@@ -52,11 +52,11 @@ defmodule DryValidation do
     end
   end
 
-  def construct([%{name: name, rule: :start_block} | tail], result) do
-    result ++ [%{name: name, inner: construct(tail, [])}]
+  def construct([%{name: name, block: :start, rule: rule} | tail], result) do
+    result ++ [%{name: name, inner: construct(tail, []), rule: rule}]
   end
 
-  def construct([%{rule: :end_block} | _tail], result) do
+  def construct([%{block: :end} | _tail], result) do
     result
   end
 
