@@ -52,6 +52,27 @@ defmodule DryValidation.ValidatorTest do
         {:ok, result} = Validator.validate(schema, input)
         assert result == %{"name" => "15", "age" => 25}
       end
+
+      test "nested map structure" do
+        schema =
+          DryValidation.schema do
+            map :user do
+              required(:name, Types.String)
+              optional(:age, Types.String)
+              optional(:gender, Types.String)
+            end
+          end
+
+        input = %{
+          "user" => %{
+            "name" => "Jon",
+            "age" => 15
+          }
+        }
+
+        {:ok, result} = Validator.validate(schema, input)
+        assert result == input
+      end
     end
 
     context "failure" do
@@ -84,6 +105,24 @@ defmodule DryValidation.ValidatorTest do
         assert result == %{
                  "age" => "Is not a valid type; Expected type is DryValidation.Types.Integer"
                }
+      end
+
+      test "error in nested map structure" do
+        schema =
+          DryValidation.schema do
+            map :user do
+              required(:age, Types.Integer)
+            end
+          end
+
+        input = %{
+          "user" => %{
+            "name" => "Jon"
+          }
+        }
+
+        {:error, result} = Validator.validate(schema, input)
+        assert result == %{"user" => %{"age" => "Is missing"}}
       end
     end
   end
