@@ -19,6 +19,10 @@ defmodule DryValidationTest do
               required(:name)
             end
 
+            map :parent do
+              required(:eyes)
+            end
+
             map :mother, optional: true do
               required(:name)
             end
@@ -55,6 +59,12 @@ defmodule DryValidationTest do
                          inner: [%{name: "name", rule: :required, type: nil}],
                          name: "pet",
                          optional: true,
+                         rule: :map
+                       },
+                       %{
+                         inner: [%{name: "eyes", rule: :required, type: nil}],
+                         name: "parent",
+                         optional: false,
                          rule: :map
                        },
                        %{

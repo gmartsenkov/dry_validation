@@ -19,20 +19,29 @@ defmodule DryValidation do
 
   def render(buff), do: Agent.get(buff, & &1) |> Enum.reverse() |> DryValidation.construct([])
 
+  def last_start_block_id(buff) do
+    Agent.get(buff, & &1)
+    |> Enum.filter(fn x -> Map.get(x, :block) end)
+    |> Enum.map(fn x -> Map.get(x, :id) end)
+    |> Enum.max(&>=/2, fn -> 0 end)
+  end
+
   defmacro map(name, opts \\ [], do: inner) do
     quote do
       optional = unquote(Keyword.get(opts, :optional, false))
 
+      new_id = last_start_block_id(var!(buffer, __MODULE__)) + 1
+
       put_buffer(
         var!(buffer, __MODULE__),
-        %{rule: :map, block: :start, name: unquote(name), optional: optional}
+        %{rule: :map, block: :start, name: unquote(name), optional: optional, id: new_id}
       )
 
       unquote(inner)
 
       put_buffer(
         var!(buffer, __MODULE__),
-        %{rule: :map, block: :end, name: unquote(name), optional: optional}
+        %{rule: :map, block: :end, name: unquote(name), optional: optional, id: new_id}
       )
     end
   end
@@ -64,14 +73,17 @@ defmodule DryValidation do
     construct(tail, result)
   end
 
-  def construct([%{name: name, block: :start, rule: rule, optional: optional} | tail], result) do
-    {to_end, rest} = Enum.split_while(tail, fn el ->
-      !(Map.get(el, :block) == :end && Map.get(el, :name) == name)
-    end)
+  def construct([%{name: name, block: :start, rule: rule, optional: optional, id: id} | tail], result) do
+    {to_end, rest} =
+      Enum.split_while(tail, fn el ->
+        !(Map.get(el, :block) == :end && Map.get(el, :id) == id)
+      end)
+
     inner = construct(to_end, [])
 
-    result = result ++
-      [%{name: to_string(name), inner: inner, rule: rule, optional: optional}]
+    result =
+      result ++
+        [%{name: to_string(name), inner: inner, rule: rule, optional: optional}]
 
     construct(rest, result)
   end
