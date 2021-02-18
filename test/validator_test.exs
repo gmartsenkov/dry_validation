@@ -150,6 +150,11 @@ defmodule DryValidation.ValidatorTest do
                 required(:age, Types.Integer)
                 optional(:city, Types.String)
               end
+
+              map :brother, optional: true do
+                required(:age, Types.Integer)
+                optional(:city, Types.String)
+              end
             end
           end
 
