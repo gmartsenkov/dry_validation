@@ -53,6 +53,14 @@ defmodule DryValidation.Validator do
     end
   end
 
+  defp walk(%{rule: :map, name: name, inner: inner, optional: true}, input, level, pid) do
+    value = Map.get(input, name)
+
+    if value do
+      Enum.each(inner, &walk(&1, value, level ++ [name], pid))
+    end
+  end
+
   def format_result(%{result: result, errors: errors}) when map_size(errors) == 0 do
     {:ok, result}
   end

@@ -60,15 +60,40 @@ defmodule DryValidation.ValidatorTest do
               required(:name, Types.String)
               optional(:age, Types.String)
               optional(:gender, Types.String)
+
+              map :pet do
+                required(:name, Types.String)
+              end
+
+              map :mother do
+                required(:name, Types.String)
+              end
             end
           end
 
         input = %{
           "user" => %{
             "name" => "Jon",
-            "age" => 15
+            "age" => 15,
+            "pet" => %{
+              "name" => "Lab"
+            }
           }
         }
+
+        {:ok, result} = Validator.validate(schema, input)
+        assert result == input
+      end
+
+      test "optional nested map" do
+        schema =
+          DryValidation.schema do
+            map :user, optional: true do
+              required(:name, Types.String)
+            end
+          end
+
+        input = %{}
 
         {:ok, result} = Validator.validate(schema, input)
         assert result == input
