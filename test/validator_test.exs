@@ -77,6 +77,9 @@ defmodule DryValidation.ValidatorTest do
             "age" => 15,
             "pet" => %{
               "name" => "Lab"
+            },
+            "mother" => %{
+              "name" => "Jane"
             }
           }
         }
@@ -137,17 +140,33 @@ defmodule DryValidation.ValidatorTest do
           DryValidation.schema do
             map :user do
               required(:age, Types.Integer)
+
+              map :father do
+                required(:age, Types.Integer)
+                optional(:city, Types.String)
+              end
+
+              map :mother do
+                required(:age, Types.Integer)
+                optional(:city, Types.String)
+              end
             end
           end
 
         input = %{
           "user" => %{
-            "name" => "Jon"
+            "name" => "Jon",
+            "father" => %{}
           }
         }
 
         {:error, result} = Validator.validate(schema, input)
-        assert result == %{"user" => %{"age" => "Is missing"}}
+        assert result == %{
+          "user" => %{
+            "age" => "Is missing",
+            "father" => %{"age" => "Is missing"},
+            "mother" => "Is missing"
+          }}
       end
     end
   end

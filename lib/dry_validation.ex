@@ -60,13 +60,20 @@ defmodule DryValidation do
     end
   end
 
-  def construct([%{name: name, block: :start, rule: rule, optional: optional} | tail], result) do
-    result ++
-      [%{name: to_string(name), inner: construct(tail, []), rule: rule, optional: optional}]
+  def construct([%{block: :end} | tail], result) do
+    construct(tail, result)
   end
 
-  def construct([%{block: :end} | _tail], result) do
-    result
+  def construct([%{name: name, block: :start, rule: rule, optional: optional} | tail], result) do
+    {to_end, rest} = Enum.split_while(tail, fn el ->
+      !(Map.get(el, :block) == :end && Map.get(el, :name) == name)
+    end)
+    inner = construct(to_end, [])
+
+    result = result ++
+      [%{name: to_string(name), inner: inner, rule: rule, optional: optional}]
+
+    construct(rest, result)
   end
 
   def construct([head | tail], result) do
