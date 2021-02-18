@@ -49,6 +49,10 @@ defmodule DryValidation.Types.IntegerTest do
       assert Types.Integer.greater_than(1) |> Types.Func.call(1) == false
       assert Types.Integer.greater_than(1) |> Types.Func.call(0) == false
     end
+
+    it "value is casted correctly" do
+      assert Types.Integer.greater_than(1) |> Types.Func.call("1") == false
+    end
   end
 
   describe "#greater_than_or_equal" do
@@ -60,6 +64,10 @@ defmodule DryValidation.Types.IntegerTest do
       assert Types.Integer.greater_than_or_equal(1) |> Types.Func.call(2) == true
       assert Types.Integer.greater_than_or_equal(1) |> Types.Func.call(1) == true
       assert Types.Integer.greater_than_or_equal(1) |> Types.Func.call(0) == false
+    end
+
+    it "value is casted correctly" do
+      assert Types.Integer.greater_than_or_equal(1) |> Types.Func.call("1") == true
     end
   end
 
@@ -74,6 +82,10 @@ defmodule DryValidation.Types.IntegerTest do
       assert Types.Integer.less_than(1) |> Types.Func.call(2) == false
       assert Types.Integer.less_than(1) |> Types.Func.call(1) == false
     end
+
+    it "value is casted correctly" do
+      assert Types.Integer.less_than(1) |> Types.Func.call("0") == true
+    end
   end
 
   describe "#less_than_or_equal" do
@@ -86,6 +98,10 @@ defmodule DryValidation.Types.IntegerTest do
       assert Types.Integer.less_than_or_equal(1) |> Types.Func.call(0) == true
       assert Types.Integer.less_than_or_equal(1) |> Types.Func.call(2) == false
       assert Types.Integer.less_than_or_equal(1) |> Types.Func.call(1) == true
+    end
+
+    it "value is casted correctly" do
+      assert Types.Integer.less_than_or_equal(1) |> Types.Func.call("2") == false
     end
   end
 end

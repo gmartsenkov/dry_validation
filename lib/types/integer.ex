@@ -17,7 +17,8 @@ defmodule DryValidation.Types.Integer do
 
   def greater_than(value) do
     %Func{
-      fn: fn v -> v > value end
+      fn: fn v -> v > value end,
+      type: __MODULE__
     }
   end
 
@@ -29,13 +30,15 @@ defmodule DryValidation.Types.Integer do
 
   def less_than(value) do
     %Func{
-      fn: fn v -> v < value end
+      fn: fn v -> v < value end,
+      type: __MODULE__
     }
   end
 
   def less_than_or_equal(value) do
     %Func{
-      fn: fn v -> v <= value end
+      fn: fn v -> v <= value end,
+      type: __MODULE__
     }
   end
 end

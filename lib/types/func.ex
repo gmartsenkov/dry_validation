@@ -1,7 +1,12 @@
 defmodule DryValidation.Types.Func do
-  defstruct [:fn]
+  defstruct [:fn, :type]
 
-  def call(%__MODULE__{} = func, value) do
+  def call(%__MODULE__{type: nil} = func, value) do
+    func.fn.(value)
+  end
+
+  def call(%__MODULE__{type: type} = func, value) do
+    value = type.cast(value)
     func.fn.(value)
   end
 
