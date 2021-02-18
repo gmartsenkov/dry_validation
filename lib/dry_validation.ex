@@ -61,7 +61,8 @@ defmodule DryValidation do
   end
 
   def construct([%{name: name, block: :start, rule: rule, optional: optional} | tail], result) do
-    result ++ [%{name: to_string(name), inner: construct(tail, []), rule: rule, optional: optional}]
+    result ++
+      [%{name: to_string(name), inner: construct(tail, []), rule: rule, optional: optional}]
   end
 
   def construct([%{block: :end} | _tail], result) do

@@ -9,8 +9,9 @@ defmodule DryValidation.Validator do
     format_result(result)
   end
 
-  defp walk(%{rule: :required, name: name, type: _type}, input, pid) do
+  defp walk(%{rule: :required, name: name, type: nil}, input, pid) do
     value = Map.get(input, name)
+
     if value do
       put_result(pid, %{name => value})
     else
@@ -18,14 +19,31 @@ defmodule DryValidation.Validator do
     end
   end
 
+  defp walk(%{rule: :required, name: name, type: type}, input, pid) do
+    value = Map.get(input, name)
+
+    if value do
+      value = type.cast(value)
+
+      if type.valid?(value) do
+        put_result(pid, %{name => value})
+      else
+        put_error(pid, %{name => "Is not a valid type; Expected type is #{inspect(type)}"})
+      end
+    else
+      put_error(pid, %{name => "Is missing"})
+    end
+  end
+
   defp walk(%{rule: :optional, name: name, type: _type}, input, pid) do
     value = Map.get(input, name)
+
     if value do
       put_result(pid, %{name => value})
     end
   end
 
-  def format_result(%{result: result, errors: %{}}) do
+  def format_result(%{result: result, errors: errors}) when map_size(errors) == 0 do
     {:ok, result}
   end
 
@@ -46,13 +64,13 @@ defmodule DryValidation.Validator do
     Agent.update(
       pid,
       fn state ->
-        Map.update!(state, :error, fn result -> Map.merge(result, map) end)
+        Map.update!(state, :errors, fn result -> Map.merge(result, map) end)
       end
     )
   end
 
   def get_all(pid) do
-    Agent.get(pid, &(&1))
+    Agent.get(pid, & &1)
   end
 
   defp start_agent() do
