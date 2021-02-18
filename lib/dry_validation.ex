@@ -37,6 +37,12 @@ defmodule DryValidation do
     end
   end
 
+  defmacro optional(name, type \\ nil) do
+    quote do
+      tag(:optional, unquote(name), unquote(type))
+    end
+  end
+
   defmacro required(name, type \\ nil) do
     quote do
       tag(:required, unquote(name), unquote(type))
@@ -47,7 +53,7 @@ defmodule DryValidation do
     quote do
       put_buffer(
         var!(buffer, __MODULE__),
-        %{rule: unquote(tag), name: unquote(name), type: unquote(type)}
+        %{rule: unquote(tag), name: unquote(to_string(name)), type: unquote(type)}
       )
 
       %{name: unquote(name)}
@@ -55,7 +61,7 @@ defmodule DryValidation do
   end
 
   def construct([%{name: name, block: :start, rule: rule, optional: optional} | tail], result) do
-    result ++ [%{name: name, inner: construct(tail, []), rule: rule, optional: optional}]
+    result ++ [%{name: to_string(name), inner: construct(tail, []), rule: rule, optional: optional}]
   end
 
   def construct([%{block: :end} | _tail], result) do

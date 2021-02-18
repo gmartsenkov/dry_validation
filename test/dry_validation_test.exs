@@ -20,26 +20,26 @@ defmodule DryValidationTest do
 
     assert form ==
              [
-               %{name: :name, type: nil, rule: :required},
-               %{name: :age, type: nil, rule: :required},
+               %{name: "name", type: nil, rule: :required},
+               %{name: "age", type: nil, rule: :required},
                %{
                  inner: [
-                   %{name: :name, type: nil, rule: :required},
+                   %{name: "name", type: nil, rule: :required},
                    %{
                      inner: [
-                       %{name: :gender, type: nil, rule: :required},
+                       %{name: "gender", type: nil, rule: :required},
                        %{
-                         name: :birth_date,
+                         name: "birth_date",
                          type: nil,
                          rule: :required
                        }
                      ],
-                     name: :parent,
+                     name: "parent",
                      rule: :map,
                      optional: true
                    }
                  ],
-                 name: :father,
+                 name: "father",
                  rule: :map,
                  optional: false
                }
