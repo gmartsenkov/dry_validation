@@ -129,6 +129,17 @@ defmodule DryValidation.ValidatorTest do
         {:ok, result} = Validator.validate(schema, input)
         assert result == %{"age" => 6}
       end
+
+      test "list casting" do
+        schema =
+          DryValidation.schema do
+            required(:numbers, Types.List.type(Types.Integer))
+          end
+
+        input = %{"numbers" => ["1", "2", 3]}
+        {:ok, result} = Validator.validate(schema, input)
+        assert result == %{"numbers" => [1, 2, 3]}
+      end
     end
 
     context "failure" do
@@ -159,7 +170,8 @@ defmodule DryValidation.ValidatorTest do
         {:error, result} = Validator.validate(schema, input)
 
         assert result == %{
-                 "age" => "\"nonsense\" is not a valid type; Expected type is DryValidation.Types.Integer"
+                 "age" =>
+                   "\"nonsense\" is not a valid type; Expected type is DryValidation.Types.Integer"
                }
       end
 
@@ -176,7 +188,8 @@ defmodule DryValidation.ValidatorTest do
         {:error, result} = Validator.validate(schema, input)
 
         assert result == %{
-                 "age" => "\"nonsense\" is not a valid type; Expected type is DryValidation.Types.Integer"
+                 "age" =>
+                   "\"nonsense\" is not a valid type; Expected type is DryValidation.Types.Integer"
                }
       end
 
@@ -252,6 +265,28 @@ defmodule DryValidation.ValidatorTest do
                  "age" =>
                    "\"nonsense\" is not a valid type; Expected type is DryValidation.Types.Integer"
                }
+      end
+
+      test "list wrong type" do
+        schema =
+          DryValidation.schema do
+            required(:numbers, Types.List.type(Types.Integer))
+          end
+
+        input = %{"numbers" => ["1", "nonsense", 3]}
+        {:error, result} = Validator.validate(schema, input)
+        assert result == %{"numbers" => "[\"nonsense\"] are not of type DryValidation.Types.Integer"}
+      end
+
+      test "when not a list" do
+        schema =
+          DryValidation.schema do
+            required(:numbers, Types.List.type(Types.Integer))
+          end
+
+        input = %{"numbers" => "nonsense"}
+        {:error, result} = Validator.validate(schema, input)
+        assert result == %{"numbers" => "\"nonsense\" is not a List" }
       end
     end
   end

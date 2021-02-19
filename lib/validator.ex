@@ -51,6 +51,21 @@ defmodule DryValidation.Validator do
     end
   end
 
+  def validate_and_put_value(Types.List, name, value, level, pid) do
+    validate_and_put_value(%Types.List{}, name, value, level, pid)
+  end
+
+  def validate_and_put_value(%Types.List{type: type} = list, name, value, level, pid) do
+    case Types.List.call(list, value) do
+      {:ok, new_value} ->
+        put_result(pid, level, %{name => new_value})
+      {:error, :not_a_list} ->
+        put_error(pid, level, %{name => "#{inspect(value)} is not a List"})
+      {:error, invalid_values} ->
+        put_error(pid, level, %{name => "#{inspect(invalid_values)} are not of type #{inspect(type)}"})
+    end
+  end
+
   def validate_and_put_value(%Types.Func{type: nil} = func, name, value, level, pid) do
     value = Types.Func.cast(func, value)
 
