@@ -195,6 +195,21 @@ defmodule DryValidation.ValidatorTest do
                }
       end
 
+      test "empty map_list" do
+        schema =
+          DryValidation.schema do
+            map_list :people do
+              required(:name)
+              optional(:age, Types.Integer)
+            end
+          end
+
+        input = %{"people" => []}
+
+        {:ok, result} = Validator.validate(schema, input)
+        assert result == input
+      end
+
       test "nested map_lists" do
         schema =
           DryValidation.schema do
