@@ -275,7 +275,10 @@ defmodule DryValidation.ValidatorTest do
 
         input = %{"numbers" => ["1", "nonsense", 3]}
         {:error, result} = Validator.validate(schema, input)
-        assert result == %{"numbers" => "[\"nonsense\"] are not of type DryValidation.Types.Integer"}
+
+        assert result == %{
+                 "numbers" => "[\"nonsense\"] are not of type DryValidation.Types.Integer"
+               }
       end
 
       test "when not a list" do
@@ -286,7 +289,7 @@ defmodule DryValidation.ValidatorTest do
 
         input = %{"numbers" => "nonsense"}
         {:error, result} = Validator.validate(schema, input)
-        assert result == %{"numbers" => "\"nonsense\" is not a List" }
+        assert result == %{"numbers" => "\"nonsense\" is not a List"}
       end
     end
   end

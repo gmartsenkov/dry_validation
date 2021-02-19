@@ -73,7 +73,10 @@ defmodule DryValidation do
     construct(tail, result)
   end
 
-  def construct([%{name: name, block: :start, rule: rule, optional: optional, id: id} | tail], result) do
+  def construct(
+        [%{name: name, block: :start, rule: rule, optional: optional, id: id} | tail],
+        result
+      ) do
     {to_end, rest} =
       Enum.split_while(tail, fn el ->
         !(Map.get(el, :block) == :end && Map.get(el, :id) == id)

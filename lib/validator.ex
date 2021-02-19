@@ -59,10 +59,14 @@ defmodule DryValidation.Validator do
     case Types.List.call(list, value) do
       {:ok, new_value} ->
         put_result(pid, level, %{name => new_value})
+
       {:error, :not_a_list} ->
         put_error(pid, level, %{name => "#{inspect(value)} is not a List"})
+
       {:error, invalid_values} ->
-        put_error(pid, level, %{name => "#{inspect(invalid_values)} are not of type #{inspect(type)}"})
+        put_error(pid, level, %{
+          name => "#{inspect(invalid_values)} are not of type #{inspect(type)}"
+        })
     end
   end
 
@@ -86,7 +90,9 @@ defmodule DryValidation.Validator do
         put_error(pid, level, %{name => "#{inspect(value)} #{func.error_message}"})
       end
     else
-      put_error(pid, level, %{name => "#{inspect(value)} is not a valid type; Expected type is #{inspect(type)}"})
+      put_error(pid, level, %{
+        name => "#{inspect(value)} is not a valid type; Expected type is #{inspect(type)}"
+      })
     end
   end
 
@@ -96,7 +102,9 @@ defmodule DryValidation.Validator do
     if type.valid?(value) do
       put_result(pid, level, %{name => value})
     else
-      put_error(pid, level, %{name => "#{inspect(value)} is not a valid type; Expected type is #{inspect(type)}"})
+      put_error(pid, level, %{
+        name => "#{inspect(value)} is not a valid type; Expected type is #{inspect(type)}"
+      })
     end
   end
 
