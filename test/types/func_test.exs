@@ -14,6 +14,18 @@ defmodule DryValidation.Types.FuncTest do
     end
   end
 
+  describe "member_of" do
+    it "returns the correct struct" do
+      assert %Types.Func{type: nil} = Types.Func.member_of(["option1", "option2"])
+    end
+
+    it "compares the values" do
+      assert Types.Func.member_of(["dog", "cat"]) |> Types.Func.call("dog") == true
+      assert Types.Func.member_of(["dog", "cat"]) |> Types.Func.call("cat") == true
+      assert Types.Func.member_of(["dog", "cat"]) |> Types.Func.call("horse") == false
+    end
+  end
+
   describe "#call" do
     it "calls the fn in the struct" do
       type = %Types.Func{fn: fn x -> x end}

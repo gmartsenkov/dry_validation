@@ -15,4 +15,10 @@ defmodule DryValidation.Types.Func do
       fn: fn v -> v == expected end
     }
   end
+
+  def member_of(list) when is_list(list) do
+    %__MODULE__{
+      fn: fn v -> Enum.member?(list, v) end
+    }
+  end
 end
