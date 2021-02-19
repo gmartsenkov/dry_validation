@@ -18,27 +18,32 @@ defmodule DryValidation.Types.Integer do
   def greater_than(value) do
     %Func{
       fn: fn v -> v > value end,
-      type: __MODULE__
+      type: __MODULE__,
+      error_message: "is not greater than #{value}"
     }
   end
 
   def greater_than_or_equal(value) do
     %Func{
-      fn: fn v -> v >= value end
+      fn: fn v -> v >= value end,
+      type: __MODULE__,
+      error_message: "is not greater than or equal to #{value}"
     }
   end
 
   def less_than(value) do
     %Func{
       fn: fn v -> v < value end,
-      type: __MODULE__
+      type: __MODULE__,
+      error_message: "is not less than #{value}"
     }
   end
 
   def less_than_or_equal(value) do
     %Func{
       fn: fn v -> v <= value end,
-      type: __MODULE__
+      type: __MODULE__,
+      error_message: "is not less than or equal to #{value}"
     }
   end
 end

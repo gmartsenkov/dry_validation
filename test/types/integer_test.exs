@@ -41,7 +41,7 @@ defmodule DryValidation.Types.IntegerTest do
 
   describe "#greater_than" do
     it "returns a Func struct" do
-      assert %Types.Func{} = Types.Integer.greater_than(1)
+      assert %Types.Func{type: Types.Integer} = Types.Integer.greater_than(1)
     end
 
     it "works as expected" do
@@ -49,11 +49,16 @@ defmodule DryValidation.Types.IntegerTest do
       assert Types.Integer.greater_than(1) |> Types.Func.call(1) == false
       assert Types.Integer.greater_than(1) |> Types.Func.call(0) == false
     end
+
+    it "has correct error message" do
+      assert Types.Integer.greater_than(5).error_message ==
+               "is not greater than 5"
+    end
   end
 
   describe "#greater_than_or_equal" do
     it "returns a Func struct" do
-      assert %Types.Func{} = Types.Integer.greater_than_or_equal(1)
+      assert %Types.Func{type: Types.Integer} = Types.Integer.greater_than_or_equal(1)
     end
 
     it "works as expected" do
@@ -61,11 +66,16 @@ defmodule DryValidation.Types.IntegerTest do
       assert Types.Integer.greater_than_or_equal(1) |> Types.Func.call(1) == true
       assert Types.Integer.greater_than_or_equal(1) |> Types.Func.call(0) == false
     end
+
+    it "has correct error message" do
+      assert Types.Integer.greater_than_or_equal(5).error_message ==
+               "is not greater than or equal to 5"
+    end
   end
 
   describe "#less_than" do
     it "returns a Func struct" do
-      assert %Types.Func{} = Types.Integer.less_than(1)
+      assert %Types.Func{type: Types.Integer} = Types.Integer.less_than(1)
     end
 
     it "works as expected" do
@@ -74,11 +84,16 @@ defmodule DryValidation.Types.IntegerTest do
       assert Types.Integer.less_than(1) |> Types.Func.call(2) == false
       assert Types.Integer.less_than(1) |> Types.Func.call(1) == false
     end
+
+    it "has correct error message" do
+      assert Types.Integer.less_than(5).error_message ==
+               "is not less than 5"
+    end
   end
 
   describe "#less_than_or_equal" do
     it "returns a Func struct" do
-      assert %Types.Func{} = Types.Integer.less_than_or_equal(1)
+      assert %Types.Func{type: Types.Integer} = Types.Integer.less_than_or_equal(1)
     end
 
     it "works as expected" do
@@ -86,6 +101,11 @@ defmodule DryValidation.Types.IntegerTest do
       assert Types.Integer.less_than_or_equal(1) |> Types.Func.call(0) == true
       assert Types.Integer.less_than_or_equal(1) |> Types.Func.call(2) == false
       assert Types.Integer.less_than_or_equal(1) |> Types.Func.call(1) == true
+    end
+
+    it "has correct error message" do
+      assert Types.Integer.less_than_or_equal(5).error_message ==
+               "is not less than or equal to 5"
     end
   end
 end

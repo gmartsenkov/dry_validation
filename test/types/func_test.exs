@@ -12,6 +12,10 @@ defmodule DryValidation.Types.FuncTest do
       assert Types.Func.equal("text") |> Types.Func.call("text") == true
       assert Types.Func.equal("text") |> Types.Func.call("text1") == false
     end
+
+    it "has correct error message" do
+      assert Types.Func.equal("something").error_message == "is not equal to \"something\""
+    end
   end
 
   describe "member_of" do
@@ -23,6 +27,11 @@ defmodule DryValidation.Types.FuncTest do
       assert Types.Func.member_of(["dog", "cat"]) |> Types.Func.call("dog") == true
       assert Types.Func.member_of(["dog", "cat"]) |> Types.Func.call("cat") == true
       assert Types.Func.member_of(["dog", "cat"]) |> Types.Func.call("horse") == false
+    end
+
+    it "has correct error message" do
+      assert Types.Func.member_of(["dog", "cat"]).error_message ==
+               "is not a member of [\"dog\", \"cat\"]"
     end
   end
 
