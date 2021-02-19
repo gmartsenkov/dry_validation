@@ -5,8 +5,8 @@ defmodule DryValidation.Types.StringTest do
 
   describe "#cast" do
     context "when not a string" do
-      it "converts the value to string" do
-        assert Types.String.cast(5) == "5"
+      it "returns the passed value untouched" do
+        assert Types.String.cast(5) == 5
       end
     end
 

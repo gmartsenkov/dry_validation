@@ -54,7 +54,6 @@ defmodule DryValidation.Types.FuncTest do
     context "when there is a type set" do
       it "casts the value using the type" do
         assert Types.Func.cast(%Types.Func{type: Types.Integer}, "1") == 1
-        assert Types.Func.cast(%Types.Func{type: Types.String}, 1) == "1"
       end
     end
   end

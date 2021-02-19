@@ -47,12 +47,12 @@ defmodule DryValidation.ValidatorTest do
           end
 
         input = %{
-          "name" => 15,
+          "name" => "Jon",
           "age" => "25"
         }
 
         {:ok, result} = Validator.validate(schema, input)
-        assert result == %{"name" => "15", "age" => 25}
+        assert result == %{"name" => "Jon", "age" => 25}
       end
 
       test "nested map structure" do
