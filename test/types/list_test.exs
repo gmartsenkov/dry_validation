@@ -44,6 +44,26 @@ defmodule DryValidation.Types.ListTest do
         {:error, result} = Types.List.call(Types.List.type(Types.Integer), list)
         assert result == ["nonsense"]
       end
+
+      test "when list type is a Type.Func" do
+        list = [2, "3", 4]
+        {:ok, result} = Types.List.call(Types.List.type(Types.Integer.greater_than(1)), list)
+        assert result == [2, 3, 4]
+      end
+
+      test  "when an error occurs for a Type.Func" do
+        list = [1, 3, 4]
+        {:error, bad_values, error_message} = Types.List.call(Types.List.type(Types.Integer.greater_than(1)), list)
+        assert bad_values == [1]
+        assert error_message == "is not greater than 1"
+      end
+
+      test  "when a type error occurs for a Type.Func" do
+        list = [1, "nonsense", 4]
+        {:error, bad_values, error_message} = Types.List.call(Types.List.type(Types.Integer.greater_than(1)), list)
+        assert bad_values == ["nonsense"]
+        assert error_message == "are not of type DryValidation.Types.Integer"
+      end
     end
   end
 end

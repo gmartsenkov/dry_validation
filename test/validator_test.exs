@@ -140,6 +140,17 @@ defmodule DryValidation.ValidatorTest do
         {:ok, result} = Validator.validate(schema, input)
         assert result == %{"numbers" => [1, 2, 3]}
       end
+
+      test "list function" do
+        schema =
+          DryValidation.schema do
+            required(:numbers, Types.List.type(Types.Integer.greater_than(1)))
+          end
+
+        input = %{"numbers" => ["10", "2", 3]}
+        {:ok, result} = Validator.validate(schema, input)
+        assert result == %{"numbers" => [10, 2, 3]}
+      end
     end
 
     context "failure" do
@@ -290,6 +301,21 @@ defmodule DryValidation.ValidatorTest do
         input = %{"numbers" => "nonsense"}
         {:error, result} = Validator.validate(schema, input)
         assert result == %{"numbers" => "\"nonsense\" is not a List"}
+      end
+
+      test "list function error" do
+        schema =
+          DryValidation.schema do
+            required(:numbers, Types.List.type(Types.Integer.greater_than(1)))
+          end
+
+        input = %{"numbers" => ["0", "1", "2", "3"]}
+        {:error, result} = Validator.validate(schema, input)
+        assert result == %{"numbers" => "[0, 1] is not greater than 1"}
+
+        input = %{"numbers" => ["1", "nonsense", "3"]}
+        {:error, result} = Validator.validate(schema, input)
+        assert result == %{"numbers" => "[\"nonsense\"] are not of type DryValidation.Types.Integer"}
       end
     end
   end

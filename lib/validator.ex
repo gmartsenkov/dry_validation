@@ -67,6 +67,10 @@ defmodule DryValidation.Validator do
         put_error(pid, level, %{
           name => "#{inspect(invalid_values)} are not of type #{inspect(type)}"
         })
+      {:error, invalid_values, error_message} ->
+        put_error(pid, level, %{
+          name => "#{inspect(invalid_values)} #{error_message}"
+        })
     end
   end
 
