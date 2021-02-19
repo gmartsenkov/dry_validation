@@ -32,12 +32,20 @@ defmodule DryValidation.Types.FuncTest do
 
       assert Types.Func.call(type, "a value") == "a value"
     end
+  end
 
-    context "when type is set" do
-      it "casts the value using the type before it's passed to the function" do
-        type = %Types.Func{fn: fn x -> x end, type: Types.Integer}
+  describe "#cast" do
+    context "when there is no type" do
+      it "returns the same value" do
+        assert Types.Func.cast(%Types.Func{}, "1") == "1"
+        assert Types.Func.cast(%Types.Func{}, 5) == 5
+      end
+    end
 
-        assert Types.Func.call(type, "5") == 5
+    context "when there is a type set" do
+      it "casts the value using the type" do
+        assert Types.Func.cast(%Types.Func{type: Types.Integer}, "1") == 1
+        assert Types.Func.cast(%Types.Func{type: Types.String}, 1) == "1"
       end
     end
   end
