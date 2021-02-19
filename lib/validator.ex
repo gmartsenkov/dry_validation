@@ -1,6 +1,12 @@
 defmodule DryValidation.Validator do
+  @moduledoc """
+  Contains the schema validation logic.
+  """
   alias DryValidation.Types
 
+  @doc """
+  Validates a schema agains an input map.
+  """
   def validate(schema, input) do
     {:ok, pid} = start_agent()
 
@@ -11,6 +17,7 @@ defmodule DryValidation.Validator do
     format_result(result)
   end
 
+  @doc false
   defp walk(%{rule: :required, name: name, type: nil}, input, level, pid) do
     value = Map.get(input, name)
 
@@ -96,6 +103,7 @@ defmodule DryValidation.Validator do
     end
   end
 
+  @doc false
   def validate_and_put_value(Types.List, name, value, level, pid) do
     validate_and_put_value(%Types.List{}, name, value, level, pid)
   end
@@ -162,15 +170,18 @@ defmodule DryValidation.Validator do
     end
   end
 
+  @doc false
   def format_result(%{result: result, errors: errors}) when map_size(errors) == 0 do
     {:ok, result}
   end
 
+  @doc false
   def format_result(%{errors: errors}) do
     {:error, errors}
   end
 
-  def put_result(pid, level, map) do
+  @doc false
+  defp put_result(pid, level, map) do
     Agent.update(
       pid,
       fn state ->
@@ -179,7 +190,8 @@ defmodule DryValidation.Validator do
     )
   end
 
-  def put_error(pid, level, map) do
+  @doc false
+  defp put_error(pid, level, map) do
     Agent.update(
       pid,
       fn state ->
@@ -188,16 +200,19 @@ defmodule DryValidation.Validator do
     )
   end
 
-  def get_all(pid) do
+  @doc false
+  defp get_all(pid) do
     Agent.get(pid, & &1)
   end
 
+  @doc false
   defp start_agent() do
     Agent.start_link(fn ->
       %{result: %{}, errors: %{}}
     end)
   end
 
+  @doc false
   defp stop_agent(pid) do
     Agent.stop(pid)
   end
