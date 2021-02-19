@@ -11,11 +11,13 @@ defmodule DryValidation.ValidatorTest do
           DryValidation.schema do
             required(:name, Types.String)
             optional(:age, Types.Integer)
+            optional(:anything)
           end
 
         input = %{
           "name" => "Bob",
-          "age" => 15
+          "age" => 15,
+          "anything" => true
         }
 
         {:ok, result} = Validator.validate(schema, input)
@@ -150,6 +152,78 @@ defmodule DryValidation.ValidatorTest do
         input = %{"numbers" => ["10", "2", 3]}
         {:ok, result} = Validator.validate(schema, input)
         assert result == %{"numbers" => [10, 2, 3]}
+      end
+
+      test "optional map_list" do
+        schema =
+          DryValidation.schema do
+            map_list :people, optional: true do
+              required(:name)
+              optional(:age, Types.Integer)
+            end
+          end
+
+        input = %{}
+
+        {:ok, result} = Validator.validate(schema, input)
+        assert result == %{}
+      end
+
+      test "map_list" do
+        schema =
+          DryValidation.schema do
+            map_list :people do
+              required(:name)
+              optional(:age, Types.Integer)
+            end
+          end
+
+        input = %{
+          "people" => [
+            %{"name" => "Jon", "age" => "5"},
+            %{"name" => "Mark", "age" => 7}
+          ]
+        }
+
+        {:ok, result} = Validator.validate(schema, input)
+
+        assert result == %{
+                 "people" => [
+                   %{"name" => "Jon", "age" => 5},
+                   %{"name" => "Mark", "age" => 7}
+                 ]
+               }
+      end
+
+      test "nested map_lists" do
+        schema =
+          DryValidation.schema do
+            map_list :people do
+              required(:name)
+              optional(:age, Types.Integer)
+
+              map_list :cars do
+                required(:name)
+                required(:cc, Types.Integer)
+              end
+            end
+          end
+
+        input = %{
+          "people" => [
+            %{"name" => "Jon", "age" => "5", "cars" => []},
+            %{"name" => "Mark", "age" => 7, "cars" => [%{"name" => "Audi", "cc" => "1998"}]}
+          ]
+        }
+
+        {:ok, result} = Validator.validate(schema, input)
+
+        assert result == %{
+                 "people" => [
+                   %{"name" => "Jon", "age" => 5, "cars" => []},
+                   %{"name" => "Mark", "age" => 7, "cars" => [%{"name" => "Audi", "cc" => 1998}]}
+                 ]
+               }
       end
     end
 
@@ -315,7 +389,73 @@ defmodule DryValidation.ValidatorTest do
 
         input = %{"numbers" => ["1", "nonsense", "3"]}
         {:error, result} = Validator.validate(schema, input)
-        assert result == %{"numbers" => "[\"nonsense\"] are not of type DryValidation.Types.Integer"}
+
+        assert result == %{
+                 "numbers" => "[\"nonsense\"] are not of type DryValidation.Types.Integer"
+               }
+      end
+
+      test "map_list errors" do
+        schema =
+          DryValidation.schema do
+            map_list :people do
+              required(:name)
+              optional(:age, Types.Integer)
+            end
+          end
+
+        input = %{
+          "people" => [
+            %{"name" => "Jon", "age" => "5"},
+            %{"name" => "Mark", "age" => "nonsense"}
+          ]
+        }
+
+        {:error, result} = Validator.validate(schema, input)
+
+        assert result == %{
+                 "people" => [
+                   [0, %{}],
+                   [
+                     1,
+                     %{
+                       "age" =>
+                         "\"nonsense\" is not a valid type; Expected type is DryValidation.Types.Integer"
+                     }
+                   ]
+                 ]
+               }
+      end
+
+      test "nested map_lists errors" do
+        schema =
+          DryValidation.schema do
+            map_list :people do
+              required(:name)
+              optional(:age, Types.Integer)
+
+              map_list :cars do
+                required(:name)
+                required(:cc, Types.Integer)
+              end
+            end
+          end
+
+        input = %{
+          "people" => [
+            %{"name" => "Jon", "age" => "5", "cars" => []},
+            %{"name" => "Mark", "age" => 7, "cars" => [%{"name" => "Audi", "cc" => "nonsense"}]}
+          ]
+        }
+
+        {:error, result} = Validator.validate(schema, input)
+
+        assert result == %{
+                 "people" => [
+                   [0, %{}],
+                   [1, %{"cars" => [[0, %{"cc" => "\"nonsense\" is not a valid type; Expected type is DryValidation.Types.Integer"}]]}]
+                 ]
+               }
       end
     end
   end

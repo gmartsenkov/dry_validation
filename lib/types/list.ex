@@ -17,9 +17,11 @@ defmodule DryValidation.Types.List do
 
   def call(%Types.List{type: %Types.Func{} = func}, value) when is_list(value) do
     value = Enum.map(value, &Types.Func.cast(func, &1))
-    invalid_types = if func.type,
-      do: Enum.reject(value, &func.type.valid?(&1)),
-      else: []
+
+    invalid_types =
+      if func.type,
+        do: Enum.reject(value, &func.type.valid?(&1)),
+        else: []
 
     if Enum.empty?(invalid_types) do
       invalid = Enum.reject(value, &Types.Func.call(func, &1))
@@ -28,7 +30,7 @@ defmodule DryValidation.Types.List do
         do: {:ok, value},
         else: {:error, invalid, func.error_message}
     else
-     {:error, invalid_types, "are not of type #{inspect(func.type)}"}
+      {:error, invalid_types, "are not of type #{inspect(func.type)}"}
     end
   end
 

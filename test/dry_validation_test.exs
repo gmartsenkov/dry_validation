@@ -125,9 +125,19 @@ defmodule DryValidationTest do
                %{
                  inner: [
                    %{name: "name", rule: :required, type: nil},
-                   %{inner: [%{name: "cc", rule: :required, type: nil}], name: "engine", optional: false, rule: :map},
+                   %{
+                     inner: [%{name: "cc", rule: :required, type: nil}],
+                     name: "engine",
+                     optional: false,
+                     rule: :map
+                   },
                    %{name: "colour", rule: :required, type: nil},
-                   %{inner: [%{name: "name", rule: :required, type: nil}], name: "make", optional: false, rule: :map}
+                   %{
+                     inner: [%{name: "name", rule: :required, type: nil}],
+                     name: "make",
+                     optional: false,
+                     rule: :map
+                   }
                  ],
                  name: "cars",
                  optional: true,

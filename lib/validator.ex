@@ -33,6 +33,51 @@ defmodule DryValidation.Validator do
     if value, do: validate_and_put_value(type, name, value, level, pid)
   end
 
+  defp walk(%{rule: :map_list, name: name, optional: true} = rule, input, level, pid) do
+    value = Map.get(input, name)
+
+    if value do
+      walk(%{rule | optional: false}, input, level, pid)
+    end
+  end
+
+  defp walk(%{rule: :map_list, name: name, inner: inner, optional: false}, input, level, pid) do
+    value = Map.get(input, name)
+
+    if value do
+      if is_list(value) do
+        result =
+          Enum.map(value, fn v ->
+            {:ok, nested_pid} = start_agent()
+
+            Enum.each(inner, &walk(&1, v, [], nested_pid))
+            result = get_all(nested_pid)
+
+            stop_agent(nested_pid)
+            result
+          end)
+
+        errors? = Enum.any?(result, fn item -> item.errors != %{} end)
+
+        if errors? do
+          final =
+            result
+            |> Enum.with_index()
+            |> Enum.map(fn {item, index} -> [index, item.errors] end)
+
+          put_error(pid, level, %{name => final})
+        else
+          final = Enum.map(result, fn item -> item.result end)
+          put_result(pid, level, %{name => final})
+        end
+      else
+        put_error(pid, level, %{name => "#{inspect(value)} is not a List"})
+      end
+    else
+      put_error(pid, level, %{name => "Is missing"})
+    end
+  end
+
   defp walk(%{rule: :map, name: name, inner: inner, optional: false}, input, level, pid) do
     value = Map.get(input, name)
 
@@ -67,6 +112,7 @@ defmodule DryValidation.Validator do
         put_error(pid, level, %{
           name => "#{inspect(invalid_values)} are not of type #{inspect(type)}"
         })
+
       {:error, invalid_values, error_message} ->
         put_error(pid, level, %{
           name => "#{inspect(invalid_values)} #{error_message}"
@@ -98,6 +144,10 @@ defmodule DryValidation.Validator do
         name => "#{inspect(value)} is not a valid type; Expected type is #{inspect(type)}"
       })
     end
+  end
+
+  def validate_and_put_value(nil, name, value, level, pid) do
+    put_result(pid, level, %{name => value})
   end
 
   def validate_and_put_value(type, name, value, level, pid) do
