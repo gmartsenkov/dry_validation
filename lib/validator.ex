@@ -12,35 +12,23 @@ defmodule DryValidation.Validator do
   defp walk(%{rule: :required, name: name, type: nil}, input, level, pid) do
     value = Map.get(input, name)
 
-    if value do
-      put_result(pid, level, %{name => value})
-    else
-      put_error(pid, level, %{name => "Is missing"})
-    end
+    if value,
+      do: put_result(pid, level, %{name => value}),
+      else: put_error(pid, level, %{name => "Is missing"})
   end
 
   defp walk(%{rule: :required, name: name, type: type}, input, level, pid) do
     value = Map.get(input, name)
 
-    if value do
-      value = type.cast(value)
-
-      if type.valid?(value) do
-        put_result(pid, level, %{name => value})
-      else
-        put_error(pid, level, %{name => "Is not a valid type; Expected type is #{inspect(type)}"})
-      end
-    else
-      put_error(pid, level, %{name => "Is missing"})
-    end
+    if value,
+      do: validate_and_put_value(type, name, value, level, pid),
+      else: put_error(pid, level, %{name => "Is missing"})
   end
 
-  defp walk(%{rule: :optional, name: name, type: _type}, input, level, pid) do
+  defp walk(%{rule: :optional, name: name, type: type}, input, level, pid) do
     value = Map.get(input, name)
 
-    if value do
-      put_result(pid, level, %{name => value})
-    end
+    if value, do: validate_and_put_value(type, name, value, level, pid)
   end
 
   defp walk(%{rule: :map, name: name, inner: inner, optional: false}, input, level, pid) do
@@ -58,6 +46,16 @@ defmodule DryValidation.Validator do
 
     if value do
       Enum.each(inner, &walk(&1, value, level ++ [name], pid))
+    end
+  end
+
+  def validate_and_put_value(type, name, value, level, pid) do
+    value = type.cast(value)
+
+    if type.valid?(value) do
+      put_result(pid, level, %{name => value})
+    else
+      put_error(pid, level, %{name => "Is not a valid type; Expected type is #{inspect(type)}"})
     end
   end
 

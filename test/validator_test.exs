@@ -41,7 +41,7 @@ defmodule DryValidation.ValidatorTest do
         schema =
           DryValidation.schema do
             required(:name, Types.String)
-            required(:age, Types.Integer)
+            optional(:age, Types.Integer)
           end
 
         input = %{
@@ -58,7 +58,7 @@ defmodule DryValidation.ValidatorTest do
           DryValidation.schema do
             map :user do
               required(:name, Types.String)
-              optional(:age, Types.String)
+              optional(:age, Types.Integer)
               optional(:gender, Types.String)
 
               map :pet do
@@ -118,6 +118,23 @@ defmodule DryValidation.ValidatorTest do
         assert result == %{"name" => "Is missing"}
       end
 
+      test "optional wrong type" do
+        schema =
+          DryValidation.schema do
+            optional(:age, Types.Integer)
+          end
+
+        input = %{
+          "age" => "nonsense"
+        }
+
+        {:error, result} = Validator.validate(schema, input)
+
+        assert result == %{
+                 "age" => "Is not a valid type; Expected type is DryValidation.Types.Integer"
+               }
+      end
+
       test "wrong type" do
         schema =
           DryValidation.schema do
@@ -166,12 +183,14 @@ defmodule DryValidation.ValidatorTest do
         }
 
         {:error, result} = Validator.validate(schema, input)
+
         assert result == %{
-          "user" => %{
-            "age" => "Is missing",
-            "father" => %{"age" => "Is missing"},
-            "mother" => "Is missing"
-          }}
+                 "user" => %{
+                   "age" => "Is missing",
+                   "father" => %{"age" => "Is missing"},
+                   "mother" => "Is missing"
+                 }
+               }
       end
     end
   end
