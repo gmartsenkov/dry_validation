@@ -26,22 +26,29 @@ defmodule DryValidation do
     |> Enum.max(&>=/2, fn -> 0 end)
   end
 
+  defmacro map_list(name, opts \\ [], do: inner) do
+    quote do
+      map(unquote(name), unquote(Keyword.put(opts, :rule, :map_list)), do: unquote(inner))
+    end
+  end
+
   defmacro map(name, opts \\ [], do: inner) do
     quote do
       optional = unquote(Keyword.get(opts, :optional, false))
+      rule = unquote(Keyword.get(opts, :rule, :map))
 
       new_id = last_start_block_id(var!(buffer, __MODULE__)) + 1
 
       put_buffer(
         var!(buffer, __MODULE__),
-        %{rule: :map, block: :start, name: unquote(name), optional: optional, id: new_id}
+        %{rule: rule, block: :start, name: unquote(name), optional: optional, id: new_id}
       )
 
       unquote(inner)
 
       put_buffer(
         var!(buffer, __MODULE__),
-        %{rule: :map, block: :end, name: unquote(name), optional: optional, id: new_id}
+        %{rule: rule, block: :end, name: unquote(name), optional: optional, id: new_id}
       )
     end
   end

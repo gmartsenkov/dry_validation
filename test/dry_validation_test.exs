@@ -38,6 +38,24 @@ defmodule DryValidationTest do
         map :mother do
           required(:name)
         end
+
+        map_list :pets do
+          required(:name)
+        end
+
+        map_list :cars, optional: true do
+          required(:name)
+
+          map :engine do
+            required(:cc)
+          end
+
+          required(:colour)
+
+          map :make do
+            required(:name)
+          end
+        end
       end
 
     assert form ==
@@ -97,6 +115,23 @@ defmodule DryValidationTest do
                  name: "mother",
                  optional: false,
                  rule: :map
+               },
+               %{
+                 inner: [%{name: "name", rule: :required, type: nil}],
+                 name: "pets",
+                 optional: false,
+                 rule: :map_list
+               },
+               %{
+                 inner: [
+                   %{name: "name", rule: :required, type: nil},
+                   %{inner: [%{name: "cc", rule: :required, type: nil}], name: "engine", optional: false, rule: :map},
+                   %{name: "colour", rule: :required, type: nil},
+                   %{inner: [%{name: "name", rule: :required, type: nil}], name: "make", optional: false, rule: :map}
+                 ],
+                 name: "cars",
+                 optional: true,
+                 rule: :map_list
                }
              ]
   end
