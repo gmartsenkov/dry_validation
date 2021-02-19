@@ -1,4 +1,6 @@
 defmodule DryValidation.Validator do
+  alias DryValidation.Types
+
   def validate(schema, input) do
     {:ok, pid} = start_agent()
 
@@ -49,13 +51,37 @@ defmodule DryValidation.Validator do
     end
   end
 
+  def validate_and_put_value(%Types.Func{type: nil} = func, name, value, level, pid) do
+    value = Types.Func.cast(func, value)
+
+    if Types.Func.call(func, value) do
+      put_result(pid, level, %{name => value})
+    else
+      put_error(pid, level, %{name => "#{inspect(value)} #{func.error_message}"})
+    end
+  end
+
+  def validate_and_put_value(%Types.Func{type: type} = func, name, value, level, pid) do
+    value = Types.Func.cast(func, value)
+
+    if type.valid?(value) do
+      if Types.Func.call(func, value) do
+        put_result(pid, level, %{name => value})
+      else
+        put_error(pid, level, %{name => "#{inspect(value)} #{func.error_message}"})
+      end
+    else
+      put_error(pid, level, %{name => "#{inspect(value)} is not a valid type; Expected type is #{inspect(type)}"})
+    end
+  end
+
   def validate_and_put_value(type, name, value, level, pid) do
     value = type.cast(value)
 
     if type.valid?(value) do
       put_result(pid, level, %{name => value})
     else
-      put_error(pid, level, %{name => "Is not a valid type; Expected type is #{inspect(type)}"})
+      put_error(pid, level, %{name => "#{inspect(value)} is not a valid type; Expected type is #{inspect(type)}"})
     end
   end
 

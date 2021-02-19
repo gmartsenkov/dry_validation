@@ -101,6 +101,34 @@ defmodule DryValidation.ValidatorTest do
         {:ok, result} = Validator.validate(schema, input)
         assert result == input
       end
+
+      test "function calls" do
+        schema =
+          DryValidation.schema do
+            required(:name, Types.Func.equal("Jon"))
+            required(:age, Types.Integer.greater_than(5))
+          end
+
+        input = %{
+          "name" => "Jon",
+          "age" => 6
+        }
+
+        {:ok, result} = Validator.validate(schema, input)
+        assert result == input
+      end
+
+      test "cast function calls" do
+        schema =
+          DryValidation.schema do
+            required(:age, Types.Integer.greater_than(5))
+          end
+
+        input = %{"age" => "6"}
+
+        {:ok, result} = Validator.validate(schema, input)
+        assert result == %{"age" => 6}
+      end
     end
 
     context "failure" do
@@ -131,7 +159,7 @@ defmodule DryValidation.ValidatorTest do
         {:error, result} = Validator.validate(schema, input)
 
         assert result == %{
-                 "age" => "Is not a valid type; Expected type is DryValidation.Types.Integer"
+                 "age" => "\"nonsense\" is not a valid type; Expected type is DryValidation.Types.Integer"
                }
       end
 
@@ -148,7 +176,7 @@ defmodule DryValidation.ValidatorTest do
         {:error, result} = Validator.validate(schema, input)
 
         assert result == %{
-                 "age" => "Is not a valid type; Expected type is DryValidation.Types.Integer"
+                 "age" => "\"nonsense\" is not a valid type; Expected type is DryValidation.Types.Integer"
                }
       end
 
@@ -190,6 +218,39 @@ defmodule DryValidation.ValidatorTest do
                    "father" => %{"age" => "Is missing"},
                    "mother" => "Is missing"
                  }
+               }
+      end
+
+      test "function error messages" do
+        schema =
+          DryValidation.schema do
+            required(:age, Types.Integer.greater_than(5))
+            required(:type, Types.Func.equal("user"))
+          end
+
+        input = %{"age" => "4", "type" => "animal"}
+
+        {:error, result} = Validator.validate(schema, input)
+
+        assert result == %{
+                 "age" => "4 is not greater than 5",
+                 "type" => "\"animal\" is not equal to \"user\""
+               }
+      end
+
+      test "when function receives wrong type" do
+        schema =
+          DryValidation.schema do
+            required(:age, Types.Integer.greater_than(5))
+          end
+
+        input = %{"age" => "nonsense"}
+
+        {:error, result} = Validator.validate(schema, input)
+
+        assert result == %{
+                 "age" =>
+                   "\"nonsense\" is not a valid type; Expected type is DryValidation.Types.Integer"
                }
       end
     end
