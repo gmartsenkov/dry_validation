@@ -1,4 +1,15 @@
 defmodule DryValidation.Types.List do
+  @moduledoc """
+  Represents a list of elements. Type or a function can also be specified.
+  ```
+  DryValidation.schema do
+    required :words, Types.List.type(Types.String)
+    required :numbers, Types.List.type(Types.Integer)
+    required :numbers_greater_than_ten, Types.List.type(Types.Integer.greater_than(10))
+  end
+  ```
+  """
+
   defstruct [:type]
 
   alias DryValidation.Types
