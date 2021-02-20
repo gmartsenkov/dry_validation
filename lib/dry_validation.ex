@@ -1,7 +1,7 @@
 defmodule DryValidation do
   @moduledoc """
   Used to create a schema to validate input data against.
-  ## Example:
+  ## Example
   ```
   iex> alias DryValidation.Types
   ...>
@@ -25,7 +25,7 @@ defmodule DryValidation do
   Complex schemas can be crafted using the methods - `required`, `optional`, `map` and `map_list`.
   With the use the provided `DryValidation.Types`, requirements can be set and also cast values when possible.
 
-  ## Available Types:
+  ## Available Types
   Type          | Description
   ------------- | -------------
   `DryValidation.Types.String`  | Expects a string type `"some text"`. Will try to cast the value into a string (`1001` = `"1001"`).
@@ -36,7 +36,7 @@ defmodule DryValidation do
   `DryValidation.Types.List`    | Expects a list. Can have the list type set to one of the above, including a `Func`.
   `DryValidation.Types.Any`     | Accepts any value and will do no casting. Usually not used as the type can just be omitted when using `optional` and `required`
 
-  ## Advanced example:
+  ## Advanced example
   ```
   schema = DryValidation.schema do
     required(:name, Types.String)

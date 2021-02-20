@@ -8,7 +8,10 @@ defmodule DryValidation.MixProject do
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      docs: [
+        main: "DryValidation"
+      ]
     ]
   end
 
