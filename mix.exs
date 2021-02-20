@@ -36,7 +36,7 @@ defmodule DryValidation.MixProject do
 
   defp aliases do
     [
-      test: ["test", "credo"]
+      test: ["test", "credo --strict"]
     ]
   end
 

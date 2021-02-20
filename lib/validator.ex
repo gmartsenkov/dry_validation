@@ -206,7 +206,7 @@ defmodule DryValidation.Validator do
   end
 
   @doc false
-  defp start_agent() do
+  defp start_agent do
     Agent.start_link(fn ->
       %{result: %{}, errors: %{}}
     end)

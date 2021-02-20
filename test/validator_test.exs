@@ -2,7 +2,7 @@ defmodule DryValidation.ValidatorTest do
   use ExSpec
 
   require DryValidation
-  alias DryValidation.{Validator, Types}
+  alias DryValidation.{Types, Validator}
 
   describe "#validate" do
     context "success" do
