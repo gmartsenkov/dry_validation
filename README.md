@@ -12,24 +12,25 @@ end
 ```
 
 ## Example
-  ```
-  iex> alias DryValidation.Types
-  ...>
-  iex> schema = DryValidation.schema do
-  ...>  required(:name, Types.String)
-  ...>  optional(:age, Types.Integer)
-  ...> end
-  ...>
-  iex> input_data = %{"name" => "John", "age" => "15"}
-  iex> {:ok, output_data} = DryValidation.Validator.validate(schema, input_data)
-  iex> assert output_data == %{"name" => "John", "age" => 15}
-  ...>
-  iex> input_data = %{"name" => 15, "age" => "nonsense"}
-  iex> {:error, error} = DryValidation.Validator.validate(schema, input_data)
-  iex> assert error == %{
-  ...>  "name" => "15 is not a valid type; Expected type is DryValidation.Types.String",
-  ...>  "age" => ~s("nonsense" is not a valid type; Expected type is DryValidation.Types.Integer)
-  ...> }
+  ```elixir
+  require DryValidation
+  alias DryValidation.Types
+  
+  schema = DryValidation.schema do
+    required(:name, Types.String)
+    optional(:age, Types.Integer)
+  end
+  
+  input_data = %{"name" => "John", "age" => "15"}
+  {:ok, output_data} = DryValidation.Validator.validate(schema, input_data)
+  assert output_data == %{"name" => "John", "age" => 15}
+  
+  input_data = %{"name" => 15, "age" => "nonsense"}
+  {:error, error} = DryValidation.Validator.validate(schema, input_data)
+  assert error == %{
+    "name" => "15 is not a valid type; Expected type is DryValidation.Types.String",
+    "age" => ~s("nonsense" is not a valid type; Expected type is DryValidation.Types.Integer)
+  }
   ```
 
   Complex schemas can be crafted using the methods - `required`, `optional`, `map` and `map_list`.
@@ -47,7 +48,7 @@ end
   `DryValidation.Types.Any`     | Accepts any value and will do no casting. Usually not used as the type can just be omitted when using `optional` and `required`
 
   ## Advanced example
-  ```
+  ```elixir
   schema = DryValidation.schema do
     required(:name, Types.String)
     required(:age, Types.Integer.greater_than(18))
