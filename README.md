@@ -1,4 +1,7 @@
 # DryValidation
+[![Hex.pm](https://img.shields.io/hexpm/v/dry_validation.svg)](https://hex.pm/packages/dry_validation)
+[![CircleCI](https://circleci.com/gh/gmartsenkov/dry_validation.svg?style=svg)](https://circleci.com/gh/gmartsenkov/dry_validation)
+
 Provides a DSL to define complex validation schemas, with the ability to cast values, define custom validation rules and much more.
 
 ## Installation
