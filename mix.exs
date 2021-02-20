@@ -11,7 +11,8 @@ defmodule DryValidation.MixProject do
       aliases: aliases(),
       docs: [
         main: "DryValidation"
-      ]
+      ],
+      package: package
     ]
   end
 
@@ -35,6 +36,17 @@ defmodule DryValidation.MixProject do
   defp aliases do
     [
       test: ["test", "credo"]
+    ]
+  end
+
+  defp package() do
+    [
+      # This option is only needed when you don't want to use the OTP application name
+      name: "dry_validation",
+      # These are the default files included in the package
+      files: ~w(lib .formatter.exs mix.exs README*),
+      licenses: ["Apache-2.0"],
+      links: %{"GitHub" => "https://github.com/gmartsenkov/dry_validation"}
     ]
   end
 end
