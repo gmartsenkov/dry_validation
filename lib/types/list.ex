@@ -14,10 +14,14 @@ defmodule DryValidation.Types.List do
 
   alias DryValidation.Types
 
+  @doc """
+  Specify the required type of the elements within the list.
+  """
   def type(type) do
     %Types.List{type: type}
   end
 
+  @doc false
   def call(%Types.List{type: nil}, value) when is_list(value) do
     {:ok, value}
   end
