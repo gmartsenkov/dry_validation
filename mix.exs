@@ -4,7 +4,7 @@ defmodule DryValidation.MixProject do
   def project do
     [
       app: :dry_validation,
-      version: "1.0",
+      version: "1.0.0",
       description: "Validate input data against a schema.",
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
