@@ -468,7 +468,20 @@ defmodule DryValidation.ValidatorTest do
         assert result == %{
                  "people" => [
                    [0, %{}],
-                   [1, %{"cars" => [[0, %{"cc" => "\"nonsense\" is not a valid type; Expected type is DryValidation.Types.Integer"}]]}]
+                   [
+                     1,
+                     %{
+                       "cars" => [
+                         [
+                           0,
+                           %{
+                             "cc" =>
+                               "\"nonsense\" is not a valid type; Expected type is DryValidation.Types.Integer"
+                           }
+                         ]
+                       ]
+                     }
+                   ]
                  ]
                }
       end

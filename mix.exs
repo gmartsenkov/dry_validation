@@ -13,7 +13,7 @@ defmodule DryValidation.MixProject do
       docs: [
         main: "DryValidation"
       ],
-      package: package
+      package: package()
     ]
   end
 
