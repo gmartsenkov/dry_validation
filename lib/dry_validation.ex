@@ -6,8 +6,8 @@ defmodule DryValidation do
   iex> alias DryValidation.Types
   ...>
   iex> schema = DryValidation.schema do
-  ...>  required(:name, Types.String)
-  ...>  optional(:age, Types.Integer)
+  ...>  required :name, Types.String
+  ...>  optional :age, Types.Integer
   ...> end
   ...>
   iex> input_data = %{"name" => "John", "age" => "15"}
@@ -39,19 +39,19 @@ defmodule DryValidation do
   ## Advanced example
   ```
   schema = DryValidation.schema do
-    required(:name, Types.String)
-    required(:age, Types.Integer.greater_than(18))
-    required(:type, Types.Func.equal("users"))
-    optional(:pets, Types.Func.member_of(["dog", "cat", "bird"]))
-    optional(:favourite_numbers, Types.List.type(Types.Integer))
+    required :name, Types.String
+    required :age, Types.Integer.greater_than(18)
+    required :type, Types.Func.equal("users")
+    optional :pets, Types.Func.member_of(["dog", "cat", "bird"])
+    optional :favourite_numbers, Types.List.type(Types.Integer)
 
     map_list :cars do
-      required(:make, Types.String)
-      required(:cc, Types.Integer)
+      required :make, Types.String
+      required :cc, Types.Integer
     end
 
     map :house, optional: true do
-      required(:address, Types.String)
+      required :address, Types.String
     end
   end
 
