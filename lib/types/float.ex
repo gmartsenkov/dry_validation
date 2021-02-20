@@ -10,8 +10,6 @@ defmodule DryValidation.Types.Float do
   """
 
   @doc false
-  def cast(value) when is_float(value), do: value
-
   def cast(value) when is_binary(value) do
     case Float.parse(value) do
       {number, ""} -> number

@@ -20,7 +20,7 @@ defmodule DryValidation.Types.FloatTest do
 
     context "when an float" do
       it "returns the same value" do
-        assert Types.Float.cast(5) == 5
+        assert Types.Float.cast(5.5) == 5.5
       end
     end
   end
