@@ -44,6 +44,7 @@ end
   ------------- | -------------
   `DryValidation.Types.String`  | Expects a string type `"some text"`. Will try to cast the value into a string (`1001` = `"1001"`).
   `DryValidation.Types.Bool`    | Expects a boolean type `[true/false]`. Will cast the strings "true"/"false" to real booleans
+  `DryValidation.Types.Date`    | Expects a date type `~U[2023-01-20]`. Will try to cast the value into a a date using `Date.from_iso8601`.
   `DryValidation.Types.Float`   | Expects a float type `[15.51]`. Will try to cast a string to a float (`"15.5"` = `15.5`).
   `DryValidation.Types.Integer` | Expects an integer type `[101]`. Will try to cast a string to an integer (`"100"` = `100`). It'll fail the cast if the string is a float.
   `DryValidation.Types.Func`    | Custom rules can be build using this, see the module docs. Example is the `DryValidation.Types.Integer.greater_than(5)` rule.
